@@ -1,49 +1,68 @@
-import { Avatar, Box, Hidden, Tooltip } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+import {
+  Box,
+  Tooltip,
+  TooltipProps,
+  tooltipClasses,
+  styled
+} from '@mui/material';
+import Link from 'src/components/Link';
 
 const LogoWrapper = styled(Link)(
   ({ theme }) => `
         color: ${theme.palette.text.primary};
-        padding: ${theme.spacing(0, 1, 0, 0)};
         display: flex;
         text-decoration: none;
+        width: 80px;
+        margin: 0 auto;
+        text-align: center;
         font-weight: ${theme.typography.fontWeightBold};
 `
 );
 
 const LogoSignWrapper = styled(Box)(
   () => `
-        width: 52px;
-        height: 38px;
-        margin-top: 4px;
-        transform: scale(.8);
+        width: auto;
+        height: 40px;
 `
 );
 
-const LogoTextWrapper = styled(Box)(
-  ({ theme }) => `
-        padding-left: ${theme.spacing(1)};
+const LogoTC = styled('img')(
+  () => `
+        width: auto;
+        height: 40px;
 `
-);
+)
 
-const LogoText = styled(Box)(
-  ({ theme }) => `
-        padding-top: ${theme.spacing(2)};
-        font-size: ${theme.typography.pxToRem(15)};
-        font-weight: ${theme.typography.fontWeightBold};
-`
-);
+const TooltipWrapper = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: theme.colors.alpha.trueWhite[100],
+      color: theme.palette.getContrastText(theme.colors.alpha.trueWhite[100]),
+      fontSize: theme.typography.pxToRem(12),
+      fontWeight: 'bold',
+      borderRadius: theme.general.borderRadiusSm,
+      boxShadow:
+          '0 .2rem .8rem rgba(7,9,25,.18), 0 .08rem .15rem rgba(7,9,25,.15)'
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+      color: theme.colors.alpha.trueWhite[100]
+  }
+}));
 
 function Logo() {
-
-
+  // const { size } = props
   return (
-    <LogoWrapper to="/">
-      <LogoSignWrapper>
-        <Avatar sx={{ width: 50, height: 50 }} src={'/static/images/logo/tc_icon.png'} />
-      </LogoSignWrapper>
-    </LogoWrapper>
+      <TooltipWrapper
+          title="Painel - Familia TC"
+          arrow
+      >
+          <LogoWrapper href="/panel">
+              <LogoSignWrapper>
+                  <LogoTC src="/static/images/logo/tc_icon.png" />
+              </LogoSignWrapper>
+          </LogoWrapper>
+      </TooltipWrapper>
   );
 }
 

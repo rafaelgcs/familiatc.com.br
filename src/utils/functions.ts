@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
+
 // Debounce Function
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
+export const debounce = (func, wait, immediate = false) => {
   var timeout;
   return function () {
     var context = this,
@@ -19,43 +21,26 @@ function debounce(func, wait, immediate) {
   };
 }
 
-const addDaysInDate = function (date, days) {
-  date.setDate(date.getDate() + days);
-  return date;
-};
+export const generateRandomColors = (length = 7) => {
 
-const getFormatedDate = (date, withHours) => {
-  let days = date.getUTCDate();
-  let month = date.getUTCMonth() + 1;
-  let year = date.getUTCFullYear();
-  let hour = date.getHours();
-  let min = date.getMinutes();
+  let arr = [];
 
-  let str = `${days < 10 ? `0${days}` : days}/${
-    month < 10 ? `0${month}` : month
-  }/${year}`;
+  for (let i = 0; i < length; i++) {
+    let item = `#${Math.floor(Math.random() * 16777215).toString(16)}`
+    if (item.length == 7) {
+      arr.push(item)
+    } else {
+      i--
+    }
 
-  if (withHours) {
-    str += ` - ${hour < 10 ? `0${hour}` : hour}:${min < 10 ? `0${min}` : min}`;
   }
 
-  return str;
-};
+  if (length == 1) return arr[0]
 
-const getNameInitials = (str) => {
-  let strArray = str.split(' ');
-  let initials = '';
+  return arr
+}
 
-  if (strArray.length > 1) {
-    initials = `${strArray[0][0]}${strArray[strArray.length - 1][0]}`;
-  } else {
-    initials = `${str[0]}${str[1]}`;
-  }
-
-  return initials;
-};
-
-const toCript = (str) => {
+export const toCript = (str) => {
   if (str != null) {
     const buff = Buffer.from(str, 'utf-8');
     return buff.toString('base64');
@@ -63,7 +48,7 @@ const toCript = (str) => {
   return null;
 };
 
-const fromCript = (str) => {
+export const fromCript = (str) => {
   if (str != null) {
     const buff = Buffer.from(str, 'base64');
     return buff.toString('utf-8');
@@ -71,47 +56,41 @@ const fromCript = (str) => {
   return null;
 };
 
-/**
- * Returns a random number between min (inclusive) and max (exclusive)
- */
-const getRandomArbitrary = (min, max) => {
-  return Math.random() * (max - min) + min;
-};
+export const useWindowSize = () => {
+  // Initialize state with undefined width/height so server and client renders match
+  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
 
-/**
- * Returns a random integer between min (inclusive) and max (inclusive).
- * The value is no lower than min (or the next integer greater than min
- * if min isn't an integer) and no greater than max (or the next integer
- * lower than max if max isn't an integer).
- * Using Math.round() will give you a non-uniform distribution!
- */
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+  useEffect(() => {
+    // only execute all the code below in client side
+    // Handler to call on window resize
+    function handleResize() {
+      // Set window width/height to state
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
 
-/**
- * Returns a random image from picsum.photos between width and height
- */
-const getRandomImage = (width = 800, height = 200) => {
-  let url = `https://picsum.photos/${width}/${height}`;
-  // let url = `https://picsum.photos/id/${getRandomInt(
-  //   0,
-  //   1084
-  // )}/${width}/${height}`;
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty array ensures that effect is only run on mount
+  return windowSize;
+}
+
+export const getRandomImage = () => {
+  // Get external random image from picsum.photos
+  // let url = `https://picsum.photos/${width}/${height}`;
+  let url = `/static/images/placeholders/covers/${Math.floor(Math.random() * 10)}.jpg`
 
   return url;
-};
-
-export {
-  debounce,
-  addDaysInDate,
-  getFormatedDate,
-  getNameInitials,
-  fromCript,
-  toCript,
-  getRandomArbitrary,
-  getRandomInt,
-  getRandomImage
 };

@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
-import { NavLink } from 'react-router-dom';
+import NextLink from 'next/link';
 
 import {
   Avatar,
@@ -21,7 +21,11 @@ import { styled } from '@mui/material/styles';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
-import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+import { doLocalLogout, getUser } from '@/services/auth';
+import { UserModel } from '@/models/user';
+import { useSnackbar } from 'notistack';
+import { useRouter } from 'next/router';
+import { generateRandomColors } from 'src/utils/functions';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -59,13 +63,35 @@ const UserBoxDescription = styled(Typography)(
 );
 
 function HeaderUserbox() {
+  const navigate = useRouter()
+  const { enqueueSnackbar } = useSnackbar()
+  const [user, setUser] = useState<UserModel | null>()
+  const [generatedColor, setGeneratedColor] = useState()
 
-  const user =
-  {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/1.jpg',
-    jobtitle: 'Project Manager'
-  };
+  const stringAvatar = (name: string) => {
+    let splitedName = name.split(' ')
+    if (splitedName.length > 1) {
+      return {
+        children: `${name.split(' ')[0][0]}${name.split(' ')[splitedName.length - 1][0]}`,
+      };
+    } else {
+      return {
+        children: `${name.split(' ')[0][0]}`,
+      };
+    }
+  }
+
+  const getFirstLastName = (name: string) => {
+    let splitedName = name.split(' ')
+    if (splitedName.length > 1) {
+      return `${splitedName[0]} ${splitedName[splitedName.length - 1]}`;
+    } else {
+      return {
+        children: `${splitedName[0]}`,
+      };
+    }
+  }
+
 
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -78,76 +104,91 @@ function HeaderUserbox() {
     setOpen(false);
   };
 
+  const doLogout = async () => {
+    let res = doLocalLogout()
+
+    if (res) {
+      enqueueSnackbar('Logout finalizado com sucesso!', { variant: 'success' })
+      navigate.push('/panel/login')
+    } else {
+      enqueueSnackbar('Erro ao tentar realizar logout, tente novamente.', { variant: 'error' })
+
+    }
+  }
+
+  useEffect(() => {
+    let toVerifyUser = getUser()
+    setUser(toVerifyUser)
+    setGeneratedColor(generateRandomColors(1))
+  }, [])
+
   return (
-    <>
-      <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
-        <Hidden mdDown>
-          <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
-            <UserBoxDescription variant="body2">
-              {user.jobtitle}
-            </UserBoxDescription>
-          </UserBoxText>
-        </Hidden>
-        <Hidden smDown>
-          <ExpandMoreTwoToneIcon sx={{ ml: 1 }} />
-        </Hidden>
-      </UserBoxButton>
-      <Popover
-        anchorEl={ref.current}
-        onClose={handleClose}
-        open={isOpen}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-      >
-        <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
-          <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
-            <UserBoxDescription variant="body2">
-              {user.jobtitle}
-            </UserBoxDescription>
-          </UserBoxText>
-        </MenuUserBox>
-        <Divider sx={{ mb: 0 }} />
-        <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/details" component={NavLink}>
-            <AccountBoxTwoToneIcon fontSize="small" />
-            <ListItemText primary="My Profile" />
-          </ListItem>
-          <ListItem
-            button
-            to="/dashboards/messenger"
-            component={NavLink}
-          >
-            <InboxTwoToneIcon fontSize="small" />
-            <ListItemText primary="Messenger" />
-          </ListItem>
-          <ListItem
-            button
-            to="/management/profile/settings"
-            component={NavLink}
-          >
-            <AccountTreeTwoToneIcon fontSize="small" />
-            <ListItemText primary="Account Settings" />
-          </ListItem>
-        </List>
-        <Divider />
-        <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
-            <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-            Sign out
-          </Button>
-        </Box>
-      </Popover>
-    </>
+    user ?
+      <>
+        <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
+          <Avatar variant="rounded" alt={user.name} {...stringAvatar(user.name)} sx={{ bgcolor: generatedColor }} />
+          <Hidden mdDown>
+            <UserBoxText>
+              <UserBoxLabel variant="body1">{getFirstLastName(user.name)}</UserBoxLabel>
+              <UserBoxDescription variant="body2">
+                {user.rank}
+              </UserBoxDescription>
+            </UserBoxText>
+          </Hidden>
+          <Hidden smDown>
+            <ExpandMoreTwoToneIcon sx={{ ml: 1 }} />
+          </Hidden>
+        </UserBoxButton>
+        <Popover
+          anchorEl={ref.current}
+          onClose={handleClose}
+          open={isOpen}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+        >
+          <MenuUserBox sx={{ minWidth: 210 }} display="flex">
+            <Avatar variant="rounded" alt={user.name} {...stringAvatar(user.name)} sx={{ bgcolor: generatedColor }} />
+            <UserBoxText>
+              <UserBoxLabel variant="body1">{getFirstLastName(user.name)}</UserBoxLabel>
+              <UserBoxDescription variant="body2">
+                {user.rank}
+              </UserBoxDescription>
+            </UserBoxText>
+          </MenuUserBox>
+          <Divider sx={{ mb: 0 }} />
+          <List sx={{ p: 1 }} component="nav">
+            <NextLink href="/management/profile" passHref>
+              <ListItem button>
+                <AccountBoxTwoToneIcon fontSize="small" />
+                <ListItemText primary="Perfil" />
+              </ListItem>
+            </NextLink>
+            {
+              user.rank == "admin" && <>
+                <NextLink href="/management/users" passHref>
+                  <ListItem button>
+                    <InboxTwoToneIcon fontSize="small" />
+                    <ListItemText primary="Usuários" />
+                  </ListItem>
+                </NextLink>
+              </>
+            }
+          </List>
+          <Divider />
+          <Box sx={{ m: 1 }}>
+            <Button onClick={() => doLogout()} color="error" fullWidth>
+              <LockOpenTwoToneIcon sx={{ mr: 1 }} />
+              Desconectar
+            </Button>
+          </Box>
+        </Popover>
+      </> : <></>
   );
 }
 

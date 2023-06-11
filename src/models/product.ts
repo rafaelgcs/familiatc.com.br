@@ -1,15 +1,15 @@
-export type ProductActive = 'visível' | 'invisível';
-
-export interface Product {
-    id: string;
-    title: string;
-    description: string;
-    price: number;
-    promotion: Boolean;
-    promotion_price: number;
-    link: string;
-    image: string;
-    active: Boolean;
-    created_at: Date;
-    updated_at: Date;
+export interface ProductModel {
+    id?: number;
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    price?: string;
+    promotion?: boolean;
+    promotion_price?: string;
+    link?: string;
+    buttonText?: string;
+    image?: string;
+    active?: boolean;
+    created_at?: string;
+    updated_at?: string;
 }
