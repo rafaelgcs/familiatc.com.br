@@ -43,6 +43,7 @@ import TestimonialsContent from '@/content/LandingPage/TestimonialsContent';
 import BackToTopButton from '@/components/ActionButtons/BackToTopButton';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import ResultsContent from '@/content/LandingPage/ResultsContent';
 
 const TooltipWrapper = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -81,6 +82,7 @@ const mainFeaturedPost = {
 
 function Overview() {
   const [testimonials, setTestimonials] = useState([]);
+  const [results, setResults] = useState([]);
   const [products, setProducts] = useState([]);
   const [faqs, setFaqs] = useState([]);
 
@@ -91,6 +93,7 @@ function Overview() {
       if (resp.success) {
         setProducts(resp.data.products)
         setTestimonials(resp.data.testimonials)
+        setResults(resp.data.results)
         setFaqs(resp.data.faqs)
       }
     }
@@ -250,6 +253,8 @@ function Overview() {
       </Container >
       <Toolbar id="testimonials" />
       <TestimonialsContent items={testimonials} />
+      <Toolbar id="results" />
+      <ResultsContent items={results} />
       <Toolbar id="products" />
       <PricingContent items={products} />
       {

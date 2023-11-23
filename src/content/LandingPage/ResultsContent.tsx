@@ -13,7 +13,7 @@ import {
 import Slider from "react-slick";
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import { TestimonialModel } from '@/models/testimonial';
+import { ResultModel } from '@/models/result';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Transition = React.forwardRef(function Transition(
@@ -73,11 +73,11 @@ const CardTestimonial = (props) => {
 }
 
 
-function TestimonialsContent(props) {
+function ResultsContent(props) {
     const { items } = props
 
     const [openImage, setOpenImage] = React.useState<boolean>(false)
-    const [selectedImage, setSelectedImage] = React.useState<TestimonialModel>()
+    const [selectedImage, setSelectedImage] = React.useState<ResultModel>()
 
     const handleCloseImage = () => {
         setOpenImage(false)
@@ -105,11 +105,11 @@ function TestimonialsContent(props) {
                         color="text.primary"
                         gutterBottom
                     >
-                        Depoimentos de Clientes
+                        Alguns Resultados de Clientes
                     </Typography>
-                    {/* <Typography variant="h5" align="center" color="text.secondary" component="p">
-                        {"Antes e depois de pessoas que seguiram o programa receitas"}
-                    </Typography> */}
+                    <Typography variant="h5" align="center" color="text.secondary" component="p">
+                        {"Resultados de alunos treinando através do métodoTC90"}
+                    </Typography>
                 </Container>
                 {/* End hero unit */}
                 <Container maxWidth="md" component="main" sx={{
@@ -164,4 +164,4 @@ function TestimonialsContent(props) {
     );
 }
 
-export default TestimonialsContent
+export default ResultsContent

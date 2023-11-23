@@ -247,6 +247,34 @@ function SidebarMenu() {
           component="div"
           subheader={
             <ListSubheader component="div" disableSticky>
+              Resultados
+            </ListSubheader>
+          }
+        >
+          <SubMenuWrapper>
+            <List component="div">
+              <ListItem component="div">
+                <NextLink href="/panel/results/list" passHref>
+                  <Button
+                    className={
+                      currentRoute === '/panel/results/list' ? 'active' : ''
+                    }
+                    disableRipple
+                    component="a"
+                    onClick={closeSidebar}
+                    startIcon={<ForumIcon />}
+                  >
+                    Lista de Resultados
+                  </Button>
+                </NextLink>
+              </ListItem>
+            </List>
+          </SubMenuWrapper>
+        </List>
+        <List
+          component="div"
+          subheader={
+            <ListSubheader component="div" disableSticky>
               FAQ
             </ListSubheader>
           }
