@@ -13,7 +13,6 @@ import { Box, Checkbox, Container, FormControlLabel, Grid, LinearProgress, Ratin
 import { Form, FormikProvider, useFormik } from 'formik';
 import { LoadingButton } from '@mui/lab';
 import { useSnackbar } from 'notistack';
-import { createTestimonial } from '@/repositories/testimonials';
 import { createResult } from '@/repositories/results';
 
 const Transition = React.forwardRef(function Transition(

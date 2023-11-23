@@ -13,8 +13,6 @@ import { Box, Checkbox, Container, FormControlLabel, Grid, LinearProgress, Ratin
 import { Form, FormikProvider, useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import { LoadingButton } from '@mui/lab';
-import { TestimonialModel } from '@/models/testimonial';
-import { updateTestimonial } from '@/repositories/testimonials';
 import { ResultModel } from '@/models/result';
 import { updateResult } from '@/repositories/results';
 
